@@ -29,11 +29,19 @@ def process_furniture(msp):
 
         if mesh:
             insert_point = entity.dxf.insert
-            # Get height (Z-axis) = max_z - min_z
-            height = mesh.extents[1][2] - mesh.extents[0][2]
-            mesh.apply_translation([insert_point.x, insert_point.y, height / 2])
-            meshes.append(mesh)
-            print(f"🪑 Placed {block_name} at ({insert_point.x:.1f}, {insert_point.y:.1f})")
+
+            # ✅ SAFETY CHECK: Ensure mesh.extents is valid
+            try:
+                # Get height from Z-axis: max_z - min_z
+                min_z = mesh.bounds[0][2]  # [min_x, min_y, min_z]
+                max_z = mesh.bounds[1][2]  # [max_x, max_y, max_z]
+                height = max_z - min_z
+                mesh.apply_translation([insert_point.x, insert_point.y, height / 2])
+                meshes.append(mesh)
+                print(f"🪑 Placed {block_name} at ({insert_point.x:.1f}, {insert_point.y:.1f})")
+            except Exception as e:
+                print(f"⚠️ Failed to place furniture '{block_name}': {e}")
+                continue
 
     print(f"🪑 Created {len(meshes)} furniture meshes")
     return meshes
