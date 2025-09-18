@@ -4,7 +4,7 @@ import trimesh
 import numpy as np
 from config import *
 
-def create_floor(msp, bounds=None):
+def create_floor(msp, unit_scale, bounds=None):
     """Create a floor mesh covering the entire plan or given bounds"""
     if bounds is None:
         # Auto-calculate bounds from entities
@@ -30,13 +30,14 @@ def create_floor(msp, bounds=None):
     width = max_x - min_x
     depth = max_y - min_y
 
-    floor_mesh = trimesh.creation.box(extents=[width, depth, FLOOR_THICKNESS])
+    floor_thickness = FLOOR_THICKNESS * unit_scale
+    floor_mesh = trimesh.creation.box(extents=[width, depth, floor_thickness])
     floor_mesh.apply_translation([
-        min_x + width/2,
-        min_y + depth/2,
-        -FLOOR_THICKNESS/2  # sits at z=0
+        min_x + width/2.0,
+        min_y + depth/2.0,
+        -floor_thickness/2.0  # top at z=0
     ])
     floor_mesh.visual.face_colors = [150, 150, 150, 255]  # gray floor
 
-    print(f"🪵 Created floor: {width:.1f} x {depth:.1f} ft")
+    print(f"🪵 Created floor: {width:.1f} x {depth:.1f} (units in DXF: top at z=0)")
     return floor_mesh
