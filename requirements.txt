@@ -1,0 +1,4 @@
+ezdxf==1.4.0
+trimesh==4.3.0
+numpy==1.26.4
+pyglet==2.0.15  # for trimesh viewer (optional)
